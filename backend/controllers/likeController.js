@@ -2,7 +2,7 @@ import Like from '../models/likeModel.js';
 import Post from '../models/postModel.js';
 import User from '../models/userModel.js';
 
-// Like a post (production-ready, using Like model only)
+// Like a post 
 export const likePost = async (req, res) => {
   try {
     const { postId } = req.body;
@@ -28,9 +28,9 @@ export const likePost = async (req, res) => {
     console.error('Like post error:', error);
     res.status(500).json({ message: 'Error liking post' });
   }
-};
+}; 
 
-// Unlike a post (production-ready, using Like model only)
+// Unlike a post
 export const unlikePost = async (req, res) => {
   try {
     const { postId } = req.body;
@@ -51,7 +51,7 @@ export const unlikePost = async (req, res) => {
   }
 };
 
-// Get like count for a post (production-ready)
+// Get like count 
 export const getLikeCount = async (req, res) => {
   try {
     const { postId } = req.params;

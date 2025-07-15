@@ -34,7 +34,7 @@ export default function PostFilterBar({
   }, [dropdownOpen]);
 
   return (
-    <div className="flex items-center bg-white rounded-full shadow px-4 py-2 gap-2 w-full md:w-auto mb-6">
+    <div className="flex flex-wrap items-center bg-white rounded-full shadow px-2 sm:px-4 py-2 gap-2 w-full md:w-auto mb-6 overflow-x-auto">
       {categories.map(cat => (
         <button
           key={cat}

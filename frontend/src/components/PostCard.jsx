@@ -145,213 +145,208 @@ export default function PostCard({ post, onDelete, onEdit, isOwner = false, isAd
 
   return (
     <div
-      className="cursor-pointer"
+      className="group cursor-pointer transition-shadow duration-200 hover:shadow-xl focus-within:shadow-2xl rounded-xl bg-white mb-6 border border-gray-100"
       onClick={(e) => {
-        // Prevent navigation if like or comment button is clicked
         if (
           e.target.closest('.like-btn') ||
           e.target.closest('.comment-btn') ||
-          e.target.closest('form') // prevent for comment form
+          e.target.closest('form')
         ) {
           return;
         }
         navigate(`/vlog/${post._id}`);
       }}
     >
-      <div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="bg-white rounded-xl shadow-lg p-0 mb-6 overflow-hidden"
-      >
-        <div className="flex flex-col sm:flex-row">
-          {/* Image on the left */}
-          {post.image ? (
-            <img
-              src={`${API_URL}/uploads/${post.image}`}
-              alt={post.title}
-              className="w-full sm:w-56 h-56 object-cover sm:rounded-l-xl sm:rounded-tr-none rounded-t-xl"
-            />
-          ) : (
-            <div className="w-full sm:w-56 h-56 bg-gray-200 flex items-center justify-center text-4xl text-gray-400 sm:rounded-l-xl sm:rounded-tr-none rounded-t-xl">
-              📷
+      <div className="flex flex-col sm:flex-row">
+        {/* Image */}
+        {post.image ? (
+          <img
+            src={`${API_URL}/uploads/${post.image}`}
+            alt={post.title}
+            className="w-full h-40 xs:h-48 sm:w-56 sm:h-56 object-cover rounded-t-xl sm:rounded-l-xl sm:rounded-tr-none transition duration-200 group-hover:brightness-95"
+          />
+        ) : (
+          <div className="w-full sm:w-56 h-56 bg-gray-100 flex items-center justify-center text-4xl text-gray-300 rounded-t-xl sm:rounded-l-xl sm:rounded-tr-none">
+            📷
+          </div>
+        )}
+        {/* Content */}
+        <div className="flex-1 flex flex-col p-3 sm:p-5 relative h-56 min-h-[12rem] sm:min-h-[14rem] max-h-[16rem]">
+          {/* Menu */}
+          {showMenu && (
+            <div className="absolute top-4 right-4 z-10" ref={menuRef}>
+              <button
+                className="p-2 rounded-full hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-300 transition-colors"
+                onClick={e => { e.stopPropagation(); setMenuOpen(v => !v); }}
+                aria-label="Show options"
+              >
+                <FiMoreVertical className="text-2xl text-gray-500" />
+              </button>
+              {menuOpen && (
+                <div className="absolute right-0 mt-2 w-32 bg-white border border-gray-200 rounded-lg shadow-lg py-1 animate-fade-in transition-all duration-200">
+                  <button
+                    onClick={e => { e.stopPropagation(); setMenuOpen(false); onEdit(post); }}
+                    className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-700 transition-colors"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    onClick={e => { e.stopPropagation(); setMenuOpen(false); onDelete(post._id); }}
+                    className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-rose-50 hover:text-rose-700 transition-colors"
+                  >
+                    Delete
+                  </button>
+                </div>
+              )}
             </div>
           )}
-          {/* Content on the right */}
-          <div className="flex-1 flex flex-col p-6 relative h-56" style={{ minHeight: '14rem', maxHeight: '14rem' }}>
-            {/* Three-dot menu */}
-            {showMenu && (
-              <div className="absolute top-4 right-4 z-10" ref={menuRef}>
-                <button
-                  className="p-2 rounded-full hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-300"
-                  onClick={e => { e.stopPropagation(); setMenuOpen(v => !v); }}
-                  aria-label="Show options"
-                >
-                  <FiMoreVertical className="text-2xl text-gray-500" />
-                </button>
-                {menuOpen && (
-                  <div className="absolute right-0 mt-2 w-32 bg-white border border-gray-200 rounded-lg shadow-lg py-1 animate-fade-in">
-                    <button
-                      onClick={e => { e.stopPropagation(); setMenuOpen(false); onEdit(post); }}
-                      className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-700 transition-colors"
-                    >
-                      Edit
-                    </button>
-                    <button
-                      onClick={e => { e.stopPropagation(); setMenuOpen(false); onDelete(post._id); }}
-                      className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-rose-50 hover:text-rose-700 transition-colors"
-                    >
-                      Delete
-                    </button>
-                  </div>
-                )}
-              </div>
+          <h3
+            className="text-base xs:text-lg sm:text-xl font-bold text-gray-900 mb-1 pr-10 hover:underline cursor-pointer transition-colors break-words"
+            onClick={e => { e.stopPropagation(); navigate(`/vlog/${post._id}`); }}
+          >
+            {post.title}
+          </h3>
+          <p className="text-xs sm:text-sm text-gray-500 mb-2">
+            By <span className="font-medium">{post.authorId?.username || 'Unknown'}</span>
+            {post.category && (
+              <> on <span className="text-indigo-600">{post.category}</span></>
             )}
-            <h3
-              className="text-xl font-bold text-gray-900 mb-2 pr-10 hover:underline cursor-pointer"
-              onClick={e => { e.stopPropagation(); navigate(`/vlog/${post._id}`); }}
-            >
-              {post.title}
-            </h3>
-            <p className="text-sm text-gray-500 mb-2">
-              By {post.authorId?.username || 'Unknown'}
-              {post.category && (
-                <> on <span className="text-indigo-600">{post.category}</span></>
-              )}
-              {' '}• {new Date(post.createdAt).toLocaleDateString()}
+            {' '}• {new Date(post.createdAt).toLocaleDateString()}
+          </p>
+          <div className="mb-3 min-h-[2.5em] sm:min-h-[3.5em] max-h-[5em] overflow-hidden relative">
+            <p className="text-gray-700 text-sm line-clamp-3">
+              {post.content.length > 200 ? post.content.slice(0, 200) + '...' : post.content}
             </p>
-            <div className="mb-4" style={{ minHeight: '4.5em', maxHeight: '4.5em', overflow: 'hidden', position: 'relative' }}>
-              <p className="text-gray-700 line-clamp-3">
-                {post.content.length > 200 ? post.content.slice(0, 200) + '...' : post.content}
-              </p>
-              {post.content.length > 200 && (
-                <button
-                  className="absolute bottom-0 right-0 text-indigo-600 hover:underline bg-white px-2 py-1 text-sm font-medium"
-                  onClick={e => { e.stopPropagation(); navigate(`/vlog/${post._id}`); }}
-                >
-                  Read more
-                </button>
-              )}
-            </div>
-            <div className="flex items-center gap-6 mb-4 mt-auto">
+            {post.content.length > 200 && (
               <button
-                onClick={handleLike}
-                disabled={loading}
-                className={`like-btn flex items-center gap-2 px-4 py-2 rounded-full transition-colors ${
-                  liked
-                    ? 'bg-red-100 text-red-500 hover:bg-red-200'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
+                className="absolute bottom-0 right-0 text-indigo-600 hover:underline bg-white px-2 py-1 text-xs font-medium transition-colors"
+                onClick={e => { e.stopPropagation(); navigate(`/vlog/${post._id}`); }}
               >
-                <span className="text-lg">
-                  {liked ? (
-                    <span role="img" aria-label="liked">❤️</span>
-                  ) : (
-                    <span role="img" aria-label="not liked">🤍</span>
-                  )}
-                </span>
-                <span>{likeCount}</span>
+                Read more
               </button>
-              <button
-                onClick={toggleComments}
-                className="comment-btn flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-full hover:bg-gray-200 transition-colors"
-              >
-                <span className="text-lg">💬</span>
-                <span>{commentCount}</span>
-              </button>
-            </div>
-            {showComments && (
-              <div className="border-t pt-4 mt-2">
-                <h4 className="font-semibold text-gray-900 mb-3">Comments</h4>
-                {token && (
-                  <form onSubmit={handleComment} className="mb-4">
-                    <div className="flex gap-2">
-                      <input
-                        type="text"
-                        value={newComment}
-                        onChange={(e) => setNewComment(e.target.value)}
-                        placeholder="Write a comment..."
-                        className="flex-1 border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                        disabled={loading}
-                      />
-                      <button
-                        type="submit"
-                        disabled={loading || !newComment.trim()}
-                        className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                      >
-                        {loading ? 'Posting...' : 'Post'}
-                      </button>
-                    </div>
-                  </form>
-                )}
-                {comments.length > 1 && !showAllComments && (
-                  <button
-                    className="text-indigo-600 hover:underline mb-2"
-                    onClick={e => { e.preventDefault(); setShowAllComments(true); }}
-                  >
-                    Show all comments
-                  </button>
-                )}
-                {showAllComments ? (
-                  <div className="space-y-3 max-h-60 overflow-y-auto">
-                    {comments.map((comment) => (
-                      <div key={comment._id} className="bg-gray-50 rounded-lg p-3">
-                        <div className="flex justify-between items-start">
-                          <div>
-                            <p className="font-medium text-sm text-gray-900">
-                              {comment.authorId?.username || 'Unknown'}
-                            </p>
-                            <p className="text-gray-700 text-sm">{comment.content}</p>
-                            <p className="text-xs text-gray-500 mt-1">
-                              {new Date(comment.createdAt).toLocaleString()}
-                            </p>
-                          </div>
-                          {(isAdmin || comment.authorId?._id === localStorage.getItem('userId')) && (
-                            <button
-                              onClick={() => handleDeleteComment(comment._id)}
-                              className="text-red-500 hover:text-red-700 text-sm"
-                            >
-                              Delete
-                            </button>
-                          )}
-                        </div>
-                      </div>
-                    ))}
-                    {comments.length === 0 && (
-                      <p className="text-gray-500 text-center py-4">No comments yet. Be the first to comment!</p>
-                    )}
-                  </div>
-                ) : (
-                  <div className="space-y-3">
-                    {comments.length > 0 ? (
-                      <div key={comments[0]._id} className="bg-gray-50 rounded-lg p-3">
-                        <div className="flex justify-between items-start">
-                          <div>
-                            <p className="font-medium text-sm text-gray-900">
-                              {comments[0].authorId?.username || 'Unknown'}
-                            </p>
-                            <p className="text-gray-700 text-sm">{comments[0].content}</p>
-                            <p className="text-xs text-gray-500 mt-1">
-                              {new Date(comments[0].createdAt).toLocaleString()}
-                            </p>
-                          </div>
-                          {(isAdmin || comments[0].authorId?._id === localStorage.getItem('userId')) && (
-                            <button
-                              onClick={() => handleDeleteComment(comments[0]._id)}
-                              className="text-red-500 hover:text-red-700 text-sm"
-                            >
-                              Delete
-                            </button>
-                          )}
-                        </div>
-                      </div>
-                    ) : (
-                      <p className="text-gray-500 text-center py-4">No comments yet. Be the first to comment!</p>
-                    )}
-                  </div>
-                )}
-              </div>
             )}
           </div>
+          <div className="flex items-center gap-2 sm:gap-4 mb-3 mt-auto flex-wrap">
+            <button
+              onClick={handleLike}
+              disabled={loading}
+              className={`like-btn flex items-center gap-2 px-4 py-2 rounded-full transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-red-200 text-sm font-medium shadow-sm ${
+                liked
+                  ? 'bg-red-100 text-red-500 hover:bg-red-200'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+              aria-label={liked ? 'Unlike post' : 'Like post'}
+            >
+              <span className="text-lg">
+                {liked ? (
+                  <span role="img" aria-label="liked">❤️</span>
+                ) : (
+                  <span role="img" aria-label="not liked">🤍</span>
+                )}
+              </span>
+              <span>{likeCount}</span>
+            </button>
+            <button
+              onClick={toggleComments}
+              className="comment-btn flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-full hover:bg-gray-200 transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-indigo-200 text-sm font-medium shadow-sm"
+              aria-label="Show comments"
+            >
+              <span className="text-lg">💬</span>
+              <span>{commentCount}</span>
+            </button>
+          </div>
+          {showComments && (
+            <div className="border-t pt-3 mt-2 animate-fade-in transition-all duration-200">
+              <h4 className="font-semibold text-gray-900 mb-2 text-sm">Comments</h4>
+              {token && (
+                <form onSubmit={handleComment} className="mb-3">
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value={newComment}
+                      onChange={(e) => setNewComment(e.target.value)}
+                      placeholder="Write a comment..."
+                      className="flex-1 border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm"
+                      disabled={loading}
+                    />
+                    <button
+                      type="submit"
+                      disabled={loading || !newComment.trim()}
+                      className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-medium"
+                    >
+                      {loading ? 'Posting...' : 'Post'}
+                    </button>
+                  </div>
+                </form>
+              )}
+              {comments.length > 1 && !showAllComments && (
+                <button
+                  className="text-indigo-600 hover:underline mb-2 text-xs font-medium"
+                  onClick={e => { e.preventDefault(); setShowAllComments(true); }}
+                >
+                  Show all comments
+                </button>
+              )}
+              {showAllComments ? (
+                <div className="space-y-2 max-h-48 overflow-y-auto">
+                  {comments.map((comment) => (
+                    <div key={comment._id} className="bg-gray-50 rounded-lg p-2">
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <p className="font-medium text-xs text-gray-900">
+                            {comment.authorId?.username || 'Unknown'}
+                          </p>
+                          <p className="text-gray-700 text-xs">{comment.content}</p>
+                          <p className="text-[10px] text-gray-500 mt-1">
+                            {new Date(comment.createdAt).toLocaleString()}
+                          </p>
+                        </div>
+                        {(isAdmin || comment.authorId?._id === localStorage.getItem('userId')) && (
+                          <button
+                            onClick={() => handleDeleteComment(comment._id)}
+                            className="text-red-500 hover:text-red-700 text-xs font-medium ml-2"
+                          >
+                            Delete
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                  {comments.length === 0 && (
+                    <p className="text-gray-500 text-center py-2 text-xs">No comments yet. Be the first to comment!</p>
+                  )}
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  {comments.length > 0 ? (
+                    <div key={comments[0]._id} className="bg-gray-50 rounded-lg p-2">
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <p className="font-medium text-xs text-gray-900">
+                            {comments[0].authorId?.username || 'Unknown'}
+                          </p>
+                          <p className="text-gray-700 text-xs">{comments[0].content}</p>
+                          <p className="text-[10px] text-gray-500 mt-1">
+                            {new Date(comments[0].createdAt).toLocaleString()}
+                          </p>
+                        </div>
+                        {(isAdmin || comments[0].authorId?._id === localStorage.getItem('userId')) && (
+                          <button
+                            onClick={() => handleDeleteComment(comments[0]._id)}
+                            className="text-red-500 hover:text-red-700 text-xs font-medium ml-2"
+                          >
+                            Delete
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  ) : (
+                    <p className="text-gray-500 text-center py-2 text-xs">No comments yet. Be the first to comment!</p>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </div>
